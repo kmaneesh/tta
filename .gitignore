@@ -1,0 +1,8 @@
+.local
+.python_history
+comtrade/code/__pycache__
+.jupyter
+.ipython
+notebook/__pycache__
+notebook/.ipynb_checkpoints
+.bash_history
