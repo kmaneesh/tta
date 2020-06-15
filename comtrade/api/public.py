@@ -8,6 +8,7 @@ import requests
 class PublicApi(object):
 
     def __init__(self):
+        # Sensible default
         self.reporter_area = 699
         self.partner_area = 344
         self.frequency = 'A'
@@ -24,7 +25,7 @@ class PublicApi(object):
         return r.json()
 
 
-    def get_data(self, reporter_area, partner_area, regime=1, period=2019, classification='HS', frequency = 'A', aggregation='AG6'):
+    def get_data(self, reporter_area, partner_area, regime=1, period=2019, aggregation='AG6', classification='HS', frequency = 'A'):
         url = "http://comtrade.un.org/api/get"
         params = {
             'r': reporter_area,
