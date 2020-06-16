@@ -37,5 +37,6 @@ class Api(object):
             'freq': frequency,
             'max': self.max_records
         }
+        print(params) # debug
         r = requests.get(url=url, params=params)
         return r.json()
