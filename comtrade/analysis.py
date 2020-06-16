@@ -22,16 +22,16 @@ class Analysis(object):
     def destination_data_available(self, period=2019):
         return self.api.data_available(reporter_area=self.partner_area, period=period)
 
-    def compare_export(self, period=2019, aggregation = 'AG6', classification = 'HS', frequency = 'A'):
-        data_out = self.api.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
+    def compare_export(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
+        data_out = self.api.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = 'AG6', frequency = 'A', classification = 'HS')  # export
         time.sleep(1)
-        data_in = self.api.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
+        data_in = self.api.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = 'AG6', frequency = 'A', classification = 'HS')  # import
         return self.compare(data_out, data_in)
 
-    def compare_import(self, period=2019, aggregate='AG6', classification = 'HS', frequency = 'A'):
-        data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
+    def compare_import(self, period=2019, aggregate='AG6', frequency = 'A', classification = 'HS'):
+        data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = 'AG6', frequency = 'A', classification = 'HS')  # import
         time.sleep(1)
-        data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
+        data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = 'AG6', frequency = 'A', classification = 'HS')  # export
         return self.compare(data_in, data_out)
 
     def compare(self, data_a, data_b):
@@ -43,9 +43,9 @@ class Analysis(object):
                 data[item['cmdCode']] = {
                     'code': item['cmdCode'],
                     'desc': item['cmdDescE'],
-                    'quantity_a': item['NetWeight'],
+                    'quantity_a': (0 if item['NetWeight'] is None else item['NetWeight']),
                     'quantity_desc_a': item['qtDesc'],
-                    'value_a': item['TradeValue'],
+                    'value_a': (0 if item['TradeValue'] is None else item['TradeValue']),
                     'quantity_b': 0,
                     'quantity_desc_b': item['qtDesc'],
                     'value_b': 0
@@ -54,11 +54,11 @@ class Analysis(object):
         for item in data_b['dataset']:
             if item['cmdCode'] in data:
                 data[item['cmdCode']].update({
-                    'quantity_b': item['NetWeight'],
+                    'quantity_b': (0 if item['NetWeight'] is None else item['NetWeight']),
                     'quantity_desc_b': item['qtDesc'],
-                    'value_b': item['TradeValue'],
-                    'quantity_diff': (data['quantity_a'] - item['NetWeight']),
-                    'value_diff': (data['value_a'] - item['TradeValue'])
+                    'value_b': (0 if item['TradeValue'] is None else item['TradeValue']),
+                    'quantity_diff': (data[item['cmdCode']]['quantity_a'] - (0 if item['NetWeight'] is None else item['NetWeight'])),
+                    'value_diff': (data[item['cmdCode']]['value_a'] - (0 if item['TradeValue'] is None else item['TradeValue']))
                 })
             else:
                 data[item['cmdCode']] = {
@@ -67,11 +67,11 @@ class Analysis(object):
                     'quantity_a': 0,
                     'quantity_desc_a': item['qtDesc'],
                     'value_a': 0,
-                    'quantity_b': item['NetWeight'],
+                    'quantity_b': (0 if item['NetWeight'] is None else item['NetWeight']),
                     'quantity_desc_b': item['qtDesc'],
-                    'value_b': item['TradeValue'],
-                    'quantity_diff': (0 - item['NetWeight']),
-                    'value_diff': (0 - item['TradeValue'])
+                    'value_b': (0 if item['TradeValue'] is None else item['TradeValue']),
+                    'quantity_diff': (0 - (0 if item['NetWeight'] is None else item['NetWeight'])),
+                    'value_diff': (0 - (0 if item['TradeValue'] is None else item['TradeValue']))
                 }
         return data
 

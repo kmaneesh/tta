@@ -25,7 +25,7 @@ class Api(object):
         return r.json()
 
 
-    def get_data(self, reporter_area, partner_area, regime=1, period=2019, aggregation='AG6', classification='HS', frequency = 'A'):
+    def get_data(self, reporter_area, partner_area, regime=1, period=2019, aggregation='AG6', frequency = 'A', classification='HS'):
         url = "http://comtrade.un.org/api/get"
         params = {
             'r': reporter_area,
