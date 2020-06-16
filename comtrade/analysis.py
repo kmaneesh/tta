@@ -1,37 +1,37 @@
 try:
     from config import *
 except ImportError:
-    from simulation.config import *
+    from .config import *
 
 import time
 
-from comtrade.api.public import PublicApi
+from comtrade.api import Api
 
 
-class Annual(object):
+class Analysis(object):
     def __init__(self):
-        self.comtrade = PublicApi()
+        self.api = Api()
 
     def set_source_destination(self, source, destination):
         self.reporter_area = source
         self.partner_area = destination
 
     def source_data_available(self, period=2019):
-        return self.comtrade.data_available(reporter_area=self.reporter_area, period=period)
+        return self.api.data_available(reporter_area=self.reporter_area, period=period)
 
     def destination_data_available(self, period=2019):
-        return self.comtrade.data_available(reporter_area=self.partner_area, period=period)
+        return self.api.data_available(reporter_area=self.partner_area, period=period)
 
     def compare_export(self, period=2019, aggregation = 'AG6', classification = 'HS', frequency = 'A'):
-        data_out = self.comtrade.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
+        data_out = self.api.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
         time.sleep(1)
-        data_in = self.comtrade.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
+        data_in = self.api.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
         return self.compare(data_out, data_in)
 
     def compare_import(self, period=2019, aggregate='AG6', classification = 'HS', frequency = 'A'):
-        data_in = self.comtrade.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
+        data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # import
         time.sleep(1)
-        data_out = self.comtrade.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
+        data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = 'AG6', classification = 'HS', frequency = 'A')  # export
         return self.compare(data_in, data_out)
 
     def compare(self, data_a, data_b):

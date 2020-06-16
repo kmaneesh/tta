@@ -5,7 +5,7 @@ except ImportError:
 
 import requests
 
-class PublicApi(object):
+class Api(object):
 
     def __init__(self):
         # Sensible default

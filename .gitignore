@@ -6,3 +6,6 @@ comtrade/code/__pycache__
 notebook/__pycache__
 notebook/.ipynb_checkpoints
 .bash_history
+notebook/in/.ipynb_checkpoints
+comtrade/__pycache__
+notebook/in/__pycache__
