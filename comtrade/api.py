@@ -5,6 +5,7 @@ except ImportError:
 
 import requests
 
+
 class Api(object):
 
     def __init__(self):
