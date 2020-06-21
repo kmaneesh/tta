@@ -8,11 +8,11 @@ import requests
 
 class Commerce(object):
     def __init__(self):
-        self.url = "https://commerce-app.gov.in/meidb/cntcomq.asp"
+        self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
 
     def get_data(self, country, year, month, hs):
         params = {
-            'radioCY': 1,
+            'radioFY': 1,
             'Mm1': month,
             'yy1': year,
             'cntcode': country,
@@ -21,6 +21,7 @@ class Commerce(object):
             'radioDAll': 1,
             'radiousd': 1
         }
+        print(params)
         r = requests.post(url=self.url, params=params, verify=False)
         return r.text
 
