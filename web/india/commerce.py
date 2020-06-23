@@ -4,14 +4,21 @@ except ImportError:
     from .config import *
 
 import requests
-
+from lxml.html import fromstring
+import re
 
 class Commerce(object):
     def __init__(self):
         self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
 
     def get_data(self, country, year, month, hs):
-        params = {
+        headers = {
+            'Host': 'commerce-app.gov.in',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Accept': '*/*'
+        }
+        data = {
             'radioFY': 1,
             'Mm1': month,
             'yy1': year,
@@ -21,13 +28,32 @@ class Commerce(object):
             'radioDAll': 1,
             'radiousd': 1
         }
-        print(params)
-        r = requests.post(url=self.url, params=params, verify=False)
+        r = requests.post(url=self.url, data=data, headers=headers, verify=False)
         return r.text
 
     def parse_data(self, data):
-        return data
-    
+        output = []
+        root = fromstring(data)
+        table = root.xpath('/html/body/table')[0]
+        cnt = 0
+        for row in table.xpath('.//tr'):
+            item = {}
+            if cnt == 0:
+                pass
+            else:
+                item['hscode'] = self.clean_text(row.xpath('.//td[2]//font//text()'))
+                item['description'] = self.clean_text(row.xpath('.//td[3]//font//text()'))
+                item['pvalue'] = self.clean_text(row.xpath('.//td[4]//font//text()'))
+                item['value'] = self.clean_text(row.xpath('.//td[5]//font//text()'))
+                item['growth'] = self.clean_text(row.xpath('.//td[6]//font//text()'))
+                output.append(item)
+            cnt = cnt + 1
+        return output
+
+    def clean_text(self, text):
+        text = ' '.join(text)
+        return text.strip()
+
     def get_country_code(self, country_name):
 
         country_codes = [
