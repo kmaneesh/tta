@@ -32,7 +32,7 @@ class Commerce(object):
         return r.text
 
     def parse_data(self, data):
-        output = []
+        output = {}
         root = fromstring(data)
         table = root.xpath('/html/body/table')[0]
         cnt = 0
@@ -46,7 +46,7 @@ class Commerce(object):
                 item['pvalue'] = self.clean_text(row.xpath('.//td[4]//font//text()'))
                 item['value'] = self.clean_text(row.xpath('.//td[5]//font//text()'))
                 item['growth'] = self.clean_text(row.xpath('.//td[6]//font//text()'))
-                output.append(item)
+                output[item['hscode']] = item
             cnt = cnt + 1
         return output
 
