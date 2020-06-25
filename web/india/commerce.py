@@ -5,8 +5,6 @@ except ImportError:
 
 import requests
 from lxml.html import fromstring
-import re
-
 
 class Commerce(object):
     def __init__(self):
@@ -23,7 +21,7 @@ class Commerce(object):
         for month in range(1, 13):
             records = self.get_month_data(country, year, month, hs)
             data.append(records)
-        return data
+        return self.sum_data(data)
 
     def get_year_data(self, country, year, hs):
         self.url = "https://commerce-app.gov.in/eidb/ecntcom.asp"
@@ -65,9 +63,9 @@ class Commerce(object):
             else:
                 item['hscode'] = self.clean_text(row.xpath('.//td[2]//font//text()'))
                 item['description'] = self.clean_text(row.xpath('.//td[3]//font//text()'))
-                item['pvalue'] = self.clean_text(row.xpath('.//td[4]//font//text()'))
-                item['value'] = self.clean_text(row.xpath('.//td[5]//font//text()'))
-                item['growth'] = self.clean_text(row.xpath('.//td[6]//font//text()'))
+                item['pvalue'] = 0 if self.clean_text(row.xpath('.//td[4]//font//text()')) == '' else float(self.clean_text(row.xpath('.//td[4]//font//text()')).replace(',',''))
+                item['value'] = 0 if self.clean_text(row.xpath('.//td[5]//font//text()')) == '' else float(self.clean_text(row.xpath('.//td[5]//font//text()')).replace(',',''))
+                item['growth'] = 0 if self.clean_text(row.xpath('.//td[6]//font//text()')) == '' else float(self.clean_text(row.xpath('.//td[6]//font//text()')).replace(',',''))
                 output[item['hscode']] = item
             cnt = cnt + 1
         return output
@@ -75,8 +73,8 @@ class Commerce(object):
     def sum_data(self, data):
         output = {}
         for records in data:
-            for record in records:
-                print(record)
+            for key, record in records.items():
+
                 if record['hscode'] in output:
                     output[record['hscode']]['pvalue'] = output[record['hscode']]['pvalue'] + record['pvalue']
                     output[record['hscode']]['value'] = output[record['hscode']]['value'] + record['value']
@@ -86,7 +84,6 @@ class Commerce(object):
                     output[record['hscode']]['description'] = record['description']
                     output[record['hscode']]['pvalue'] = record['pvalue']
                     output[record['hscode']]['value'] = record['value']
-
         return output
 
     def clean_text(self, text):
