@@ -47,7 +47,7 @@ class Analysis(object):
                     'desc': item['cmdDescE'],
                     'quantity_a': net_weight,
                     'quantity_desc_a': item['qtDesc'],
-                    'value_a': trade_value,
+                    'value_a': round(trade_value/1000000,2),
                     'quantity_b': 0,
                     'quantity_desc_b': item['qtDesc'],
                     'value_b': 0,
@@ -62,7 +62,7 @@ class Analysis(object):
                 data[item['cmdCode']].update({
                     'quantity_b': net_weight,
                     'quantity_desc_b': item['qtDesc'],
-                    'value_b': trade_value,
+                    'value_b': round(trade_value/1000000,2),
                     # 'quantity_diff': (data[item['cmdCode']]['quantity_a'] - net_weight),
                     # 'value_diff': (data[item['cmdCode']]['value_a'] - trade_value)
                 })
@@ -75,7 +75,7 @@ class Analysis(object):
                     'value_a': 0,
                     'quantity_b': net_weight,
                     'quantity_desc_b': item['qtDesc'],
-                    'value_b': trade_value,
+                    'value_b': round(trade_value/1000000,2),
                     # 'quantity_diff': (0 - net_weight),
                     # 'value_diff': (0 - trade_value)
                 }

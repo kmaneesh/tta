@@ -7,17 +7,39 @@ import requests
 from lxml.html import fromstring
 import re
 
+
 class Commerce(object):
     def __init__(self):
-        self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
-
-    def get_data(self, country, year, month, hs):
-        headers = {
+        self.headers = {
             'Host': 'commerce-app.gov.in',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36',
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': '*/*'
         }
+        pass
+
+    def get_calendar_year_data(self, country, year, hs):
+        data = []
+        for month in range(1, 13):
+            records = self.get_month_data(country, year, month, hs)
+            data.append(records)
+        return data
+
+    def get_year_data(self, country, year, hs):
+        self.url = "https://commerce-app.gov.in/eidb/ecntcom.asp"
+        data = {
+            'yy1': year,
+            'cntcode': country,
+            'hslevel': hs,
+            'sort': 0,
+            'radioDAll': 1,
+            'radiousd': 1
+        }
+        r = requests.post(url=self.url, data=data, headers=self.headers, verify=False)
+        return self.parse_data(r.text)
+
+    def get_month_data(self, country, year, month, hs):
+        self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
         data = {
             'radioFY': 1,
             'Mm1': month,
@@ -28,8 +50,8 @@ class Commerce(object):
             'radioDAll': 1,
             'radiousd': 1
         }
-        r = requests.post(url=self.url, data=data, headers=headers, verify=False)
-        return r.text
+        r = requests.post(url=self.url, data=data, headers=self.headers, verify=False)
+        return self.parse_data(r.text)
 
     def parse_data(self, data):
         output = {}
@@ -48,6 +70,23 @@ class Commerce(object):
                 item['growth'] = self.clean_text(row.xpath('.//td[6]//font//text()'))
                 output[item['hscode']] = item
             cnt = cnt + 1
+        return output
+
+    def sum_data(self, data):
+        output = {}
+        for records in data:
+            for record in records:
+                print(record)
+                if record['hscode'] in output:
+                    output[record['hscode']]['pvalue'] = output[record['hscode']]['pvalue'] + record['pvalue']
+                    output[record['hscode']]['value'] = output[record['hscode']]['value'] + record['value']
+                else:
+                    output[record['hscode']] = {}
+                    output[record['hscode']]['hscode'] = record['hscode']
+                    output[record['hscode']]['description'] = record['description']
+                    output[record['hscode']]['pvalue'] = record['pvalue']
+                    output[record['hscode']]['value'] = record['value']
+
         return output
 
     def clean_text(self, text):
