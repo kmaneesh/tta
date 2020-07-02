@@ -4,3 +4,5 @@
 
 Trade Transparency Analysis provide python interface to access UN Trade Comm Data and analyse in jupyter notebooks.
 
+The project is
+
