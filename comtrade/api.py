@@ -4,7 +4,7 @@ except ImportError:
     from .config import *
 
 import requests
-
+import time
 
 class Api(object):
 
@@ -41,3 +41,25 @@ class Api(object):
         print(params) # debug
         r = requests.get(url=url, params=params)
         return r.json()
+
+    def get_month_data(self, reporter_area, partner_area, regime=1, period=2019, aggregation='TOTAL', frequency = 'M', classification='HS'):
+        data = {}
+        url = "http://comtrade.un.org/api/get"
+        months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12']
+        for month in months:
+            time.sleep(1)
+            year_month = str(period) + month
+            params = {
+                'r': reporter_area,
+                'p': partner_area,
+                'rg': regime,
+                'ps': year_month,
+                'px': classification,
+                'cc': aggregation,
+                'freq': frequency,
+                'max': self.max_records
+            }
+            print(params) # debug
+            r = requests.get(url=url, params=params)
+            data[year_month] = r.json()['dataset'][0]['TradeValue']
+        return data
