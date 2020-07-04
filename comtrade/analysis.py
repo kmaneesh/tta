@@ -4,7 +4,7 @@ except ImportError:
     from .config import *
 
 import time
-
+import pandas as pd
 from comtrade.api import Api
 
 
@@ -12,26 +12,19 @@ class Analysis(object):
     def __init__(self):
         self.api = Api()
 
-    def set_source_destination(self, source, destination):
-        self.reporter_area = source
-        self.partner_area = destination
+    def data_available(self, reporter_area, period=2019, classification = 'HS', frequency = 'A'):
+        return self.api.data_available(reporter_area, period, classification, frequency)
 
-    def source_data_available(self, period=2019):
-        return self.api.data_available(reporter_area=self.reporter_area, period=period)
-
-    def destination_data_available(self, period=2019):
-        return self.api.data_available(reporter_area=self.partner_area, period=period)
-
-    def get_export_data(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
-        data_out = self.api.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
+    def get_export_data(self, reporter_area, partner_area, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
+        data_out = self.api.get_data(reporter_area, partner_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
         time.sleep(1)
-        data_in = self.api.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
+        data_in = self.api.get_data(partner_area, reporter_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
         return data_out, data_in
 
-    def get_import_data(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
-        data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
+    def get_import_data(self, reporter_area, partner_area, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
+        data_in = self.api.get_data(reporter_area, partner_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
         time.sleep(1)
-        data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
+        data_out = self.api.get_data(partner_area, reporter_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
         return data_in, data_out
 
     def compare(self, data_a, data_b, column_a='cmdCode', column_b='cmdCode'):
@@ -82,3 +75,19 @@ class Analysis(object):
                 }
         return data
 
+    def compile(self):
+        pass
+
+    def prepare(self, data):
+        df = pd.DataFrame.from_dict(data, orient='index')
+        df['value_diff'] = df['value_a'] - df['value_b']
+        df['quantity_diff'] = df['quantity_a'] - df['quantity_b']
+        df['quantity_diff'].round(2)
+        df['value_diff'].round(2)
+        df['quantity_pct'] = (df['quantity_diff'] / df['quantity_a']) * 100
+        df['value_pct'] = (df['value_diff'] / df['value_a']) * 100
+        df['quantity_pct'].round(2)
+        df['value_pct'].round(2)
+        df['value_diff_abs'] = abs(df['value_diff'])
+        df['value_pct_abs'] = abs(df['value_pct'])
+        return df
