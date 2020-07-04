@@ -63,7 +63,9 @@ class Api(object):
             r = requests.get(url=url, params=params)
             records = r.json()
             if len(records['dataset']):
-                data[year_month] = records['dataset'][0]['TradeValue']
+                data[year_month] = 0
+                for item in records['dataset']:
+                    data[year_month] = data[year_month] + item['TradeValue']
 
             else:
                 data[year_month] = 0

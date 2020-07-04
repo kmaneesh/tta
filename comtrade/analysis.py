@@ -30,19 +30,24 @@ class Analysis(object):
 
     def compare_import(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
         data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
+        print(data_in)
         time.sleep(1)
         data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
         return self.compare(data_in, data_out)
 
-    def compare(self, data_a, data_b):
+    def compare(self, data_a, data_b, column='cmdCode'):
+        print(data_a)
+        input('press ...')
+        print(data_b)
+
         data = {}
         for item in data_a['dataset']:
-            if item['cmdCode'] in data:
-                print("Duplicate cmdCode found")
+            if item[column] in data:
+                print("Duplicate " + column + " found")
             else:
                 net_weight = 0 if item['NetWeight'] is None else item['NetWeight']
                 trade_value = 0 if item['TradeValue'] is None else item['TradeValue']
-                data[item['cmdCode']] = {
+                data[item[column]] = {
                     'code': item['cmdCode'],
                     'desc': item['cmdDescE'],
                     'quantity_a': net_weight,
@@ -58,8 +63,8 @@ class Analysis(object):
         for item in data_b['dataset']:
             net_weight = 0 if item['NetWeight'] is None else item['NetWeight']
             trade_value = 0 if item['TradeValue'] is None else item['TradeValue']
-            if item['cmdCode'] in data:
-                data[item['cmdCode']].update({
+            if item[column] in data:
+                data[item[column]].update({
                     'quantity_b': net_weight,
                     'quantity_desc_b': item['qtDesc'],
                     'value_b': round(trade_value/1000000,2),
@@ -67,7 +72,7 @@ class Analysis(object):
                     # 'value_diff': (data[item['cmdCode']]['value_a'] - trade_value)
                 })
             else:
-                data[item['cmdCode']] = {
+                data[item[column]] = {
                     'code': item['cmdCode'],
                     'desc': item['cmdDescE'],
                     'quantity_a': 0,
