@@ -14,3 +14,4 @@ web/india/__pycache__
 notebook/in/jp/.ipynb_checkpoints
 notebook/in/la/.ipynb_checkpoints
 notebook/in/71/.ipynb_checkpoints
+*.csv

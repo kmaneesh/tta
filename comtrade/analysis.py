@@ -22,32 +22,28 @@ class Analysis(object):
     def destination_data_available(self, period=2019):
         return self.api.data_available(reporter_area=self.partner_area, period=period)
 
-    def compare_export(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
+    def get_export_data(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
         data_out = self.api.get_data(self.reporter_area, self.partner_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
         time.sleep(1)
         data_in = self.api.get_data(self.partner_area, self.reporter_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
-        return self.compare(data_out, data_in)
+        return data_out, data_in
 
-    def compare_import(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
+    def get_import_data(self, period=2019, aggregation = 'AG6', frequency = 'A', classification = 'HS'):
         data_in = self.api.get_data(self.reporter_area, self.partner_area, 1, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # import
-        print(data_in)
         time.sleep(1)
         data_out = self.api.get_data(self.partner_area, self.reporter_area, 2, period = period, aggregation = aggregation, frequency = frequency, classification = classification)  # export
-        return self.compare(data_in, data_out)
+        return data_in, data_out
 
-    def compare(self, data_a, data_b, column='cmdCode'):
-        print(data_a)
-        input('press ...')
-        print(data_b)
+    def compare(self, data_a, data_b, column_a='cmdCode', column_b='cmdCode'):
 
         data = {}
         for item in data_a['dataset']:
-            if item[column] in data:
-                print("Duplicate " + column + " found")
+            if item[column_a] in data:
+                print("Duplicate " + column_a + " found")
             else:
                 net_weight = 0 if item['NetWeight'] is None else item['NetWeight']
                 trade_value = 0 if item['TradeValue'] is None else item['TradeValue']
-                data[item[column]] = {
+                data[item[column_a]] = {
                     'code': item['cmdCode'],
                     'desc': item['cmdDescE'],
                     'quantity_a': net_weight,
@@ -63,8 +59,8 @@ class Analysis(object):
         for item in data_b['dataset']:
             net_weight = 0 if item['NetWeight'] is None else item['NetWeight']
             trade_value = 0 if item['TradeValue'] is None else item['TradeValue']
-            if item[column] in data:
-                data[item[column]].update({
+            if item[column_b] in data:
+                data[item[column_b]].update({
                     'quantity_b': net_weight,
                     'quantity_desc_b': item['qtDesc'],
                     'value_b': round(trade_value/1000000,2),
@@ -72,7 +68,7 @@ class Analysis(object):
                     # 'value_diff': (data[item['cmdCode']]['value_a'] - trade_value)
                 })
             else:
-                data[item[column]] = {
+                data[item[column_b]] = {
                     'code': item['cmdCode'],
                     'desc': item['cmdDescE'],
                     'quantity_a': 0,
