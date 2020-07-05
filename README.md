@@ -42,4 +42,13 @@ The import notebook provide analysis at 2, 4, 6 digit level of the product impor
 
 
 
+## Local Install
+* Install docker on your machine
+* Clone the repository
+* Navigate to the root folder
+* docker-compose build
+* docker-compose up
+* Copy paste the URL in browser
+
+
 
