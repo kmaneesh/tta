@@ -61,14 +61,12 @@ class Api(object):
             }
             print(params) # debug
             r = requests.get(url=url, params=params)
-            try:
-                records = r.json()
-                if len(records['dataset']):
-                    data[year_month] = 0
-                    for item in records['dataset']:
-                        data[year_month] = data[year_month] + item['TradeValue']
-                else:
-                    data[year_month] = 0
-            except Exception as e:
+            records = r.json()
+            if len(records['dataset']):
+                data[year_month] = 0
+                for item in records['dataset']:
+                    data[year_month] = data[year_month] + item['TradeValue']
+
+            else:
                 data[year_month] = 0
         return data
