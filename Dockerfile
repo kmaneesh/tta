@@ -1,4 +1,4 @@
-FROM jupyter/tensorflow-notebook
+FROM jupyter/scipy-notebook
 
 ENV PYTHONUNBUFFERED 1
 RUN pip install python-dotenv lxml
