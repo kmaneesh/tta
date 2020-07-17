@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     image: minelytics-notebook
     volumes:
-      - .:/home/jovyan/tta
+      - .:/home/jovyan
     ports:
       - "8888:8888"
     command: "start-notebook.sh"
