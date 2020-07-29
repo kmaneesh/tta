@@ -4,7 +4,7 @@
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kmaneesh/tta/master)
 
 ## Description
-Trade Transparency Analysis provide python interface to access UN Trade Comm Data and analyse in jupyter notebooks.
+Trade Transparency (Mirror Data) Analysis  provide python interface to access UN Trade Comm Data and analyse in jupyter notebooks.
 
 ## About
 The project is self contained and run online on https://mybinder.org/ in a browser. To run the project click on the
