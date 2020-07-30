@@ -6,3 +6,7 @@ services:
       context: .
       dockerfile: atoti.Dockerfile
     image: maneeshk/tta
+    volumes:
+      - .:/home/jovyan
+    ports:
+      - "8888:8888"

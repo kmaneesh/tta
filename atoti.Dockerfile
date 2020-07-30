@@ -47,3 +47,4 @@ RUN echo "url_pattern: \${{ env.ATOTI_URL_PATTERN }}\n" \
 RUN mkdir --parents $HOME/work && \
     python -m atoti.copy_tutorial $HOME/work/tutorial
 
+RUN pip install lxml
