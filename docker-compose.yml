@@ -2,12 +2,8 @@ version: '3'
 
 services:
   notebook:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: minelytics-notebook
+    image: maneeshk/tta
     volumes:
       - .:/home/jovyan
     ports:
       - "8888:8888"
-    command: "start-notebook.sh"

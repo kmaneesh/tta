@@ -16,15 +16,18 @@ class Commerce(object):
         }
         pass
 
-    def get_calendar_year_data(self, country, year, hs):
+    def get_calendar_year_data(self, country, year, hs, export =0):
         data = []
         for month in range(1, 13):
-            records = self.get_month_data(country, year, month, hs)
+            records = self.get_month_data(country, year, month, hs, export)
             data.append(records)
         return self.sum_data(data)
 
-    def get_year_data(self, country, year, hs):
-        self.url = "https://commerce-app.gov.in/eidb/ecntcom.asp"
+    def get_year_data(self, country, year, hs, export=0):
+        if export:
+            self.url = "https://commerce-app.gov.in/eidb/ecntcom.asp"
+        else:
+            self.url = "https://commerce-app.gov.in/eidb/icomxcntq.asp"
         data = {
             'yy1': year,
             'cntcode': country,
@@ -36,8 +39,11 @@ class Commerce(object):
         r = requests.post(url=self.url, data=data, headers=self.headers, verify=False)
         return self.parse_data(r.text)
 
-    def get_month_data(self, country, year, month, hs):
-        self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
+    def get_month_data(self, country, year, month, hs, export=0):
+        if export:
+            self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=e"
+        else:
+            self.url = "https://commerce-app.gov.in/meidb/cntcom.asp?ie=i"
         data = {
             'radioFY': 1,
             'Mm1': month,

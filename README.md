@@ -36,7 +36,7 @@ The import notebook provide analysis at 2, 4, 6 digit level of the product impor
 ## Run
 * Click on Launce Binder Icon [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/kmaneesh/tta/master) icon.
 * Wait for the image to be build and uploaded. The first time it will take some time then it will be cached.
-* Navigate to notebook > country / commodity folder ( Or any other notebook ).
+* Navigate to tta > notebook > country / commodity folder.
 * Click on the notebook, once notebook is loaded, click Kernel Menu and select Restart and Run All.
 * All the analysis will be run and you can see and play with the results if you have basic knowledge of data analysis.
 
